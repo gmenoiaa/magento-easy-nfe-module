@@ -178,8 +178,10 @@ class Easynfe_Nfe_Model_Nfe {
         
         if( Mage::getStoreConfig('easynfe_nfe/config/tpamb') == '1' ){
             $url_base = self::NFE_REQUEST_URL_BASE;
+            $url_base_key = self::NFE_REQUEST_PUT_URL;
         }else{
             $url_base = self::NFE_TEST_REQUEST_URL_BASE;
+            $url_base_key = self::NFE_TEST_REQUEST_PUT_URL;
         }
         
         //$httpmessage = file($url . $request->getMessages() );
@@ -206,7 +208,13 @@ class Easynfe_Nfe_Model_Nfe {
         if( is_array($httpmessage) ){
              
             if( 'AUTHORIZED' == str_replace(PHP_EOL, '', $httpmessage[0]) ){
-                $access_key = file_get_contents( $url_base . 'nfe/' . Mage::getStoreConfig('easynfe_nfe/acesso/chave') . '/' . self::NFE_SERIE . '/' . $httpmessage[1] . '/accessKey');
+            	$context = stream_context_create(array(
+            			'http' => array(
+            					'header'  => "Authorization: Basic " . base64_encode(Mage::getStoreConfig('easynfe_nfe/acesso/chave') . ":" . Mage::getStoreConfig('easynfe_nfe/acesso/pass'))
+            			)
+            	));
+
+            	$access_key = file_get_contents( $url_base_key . '/' . Mage::getStoreConfig('easynfe_nfe/acesso/chave') . '/' . self::NFE_SERIE . '/' . $httpmessage[1] . '/accessKey', false, $context);
                 
                 if( $access_key ){ 
                     
