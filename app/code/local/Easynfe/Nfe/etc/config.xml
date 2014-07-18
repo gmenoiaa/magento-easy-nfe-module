@@ -27,7 +27,7 @@
     <global>
         <template>
             <email>
-                <easynfe_email translate="label" module="easynfe_nfe">
+                <easynfe_email translate="label" module="nfe">
                     <label>EasyNFe Template</label>
                     <file>easynfe_email.html</file>
                     <type>html</type>
