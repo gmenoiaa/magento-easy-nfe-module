@@ -85,6 +85,8 @@
 "[nfe.vol][nfe.pesoL]","Peso Líquido"
 "[nfe.vol][nfe.qVol]","Qtd. Volumes"
 "[nfe.modFrete]","Modalidade do Frete"
+"[nfe.indIEDest]","Tipo Contribuinte"
+"[nfe.ICMSTot][nfe.vICMSDeson]","Valor ICMS Desonerado"
 "error","Erro"
 "processing","Processando" 	
 "finished","Completo" 	

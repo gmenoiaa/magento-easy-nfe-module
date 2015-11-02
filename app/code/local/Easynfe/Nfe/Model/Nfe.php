@@ -369,7 +369,7 @@ class Easynfe_Nfe_Model_Nfe {
 
         $aCustomerData['nfe.CPF'] = ( str_replace(array('.', '/', '-'), array('', '', ''), $mOrder->getCustomerTaxvat()) );
         $aCustomerData['nfe.xNome'] = $mOrder->getCustomerName();
-        $aCustomerData['nfe.IE'] = '';
+        $aCustomerData['nfe.indIEDest'] = 9;
 
         $mShipping = $mOrder->getShippingAddress();
         
@@ -402,9 +402,10 @@ class Easynfe_Nfe_Model_Nfe {
 
         $key = 0;
         
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBC'] = 0;
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'] = 0;
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMS'] = 0;
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBC'] = '0';
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'] = '0';
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMS'] = '0';
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMSDeson'] = '0';
 
         $mShipping = $mOrderShipment->getOrder()->getShippingAddress();
         
@@ -583,7 +584,6 @@ class Easynfe_Nfe_Model_Nfe {
         $aIdeData['nfe.mod'] = Mage::getStoreConfig('easynfe_nfe/config/mod');
         $aIdeData['nfe.serie'] = Mage::getStoreConfig('easynfe_nfe/config/serie') ;
         $aIdeData['nfe.nNF'] = '1'; // rewrited on webservice 
-        $aIdeData['nfe.dEmi'] = date('Y-m-d'); // data de emissao do documento fiscal
         $aIdeData['nfe.dSaiEnt'] = date('Y-m-d'); // data de saida ou entrada do produtogn
         $aIdeData['nfe.hSaiEnt'] = date('H:i:s'); // hora de saida ou entrada do produto
         $aIdeData['nfe.tpNF'] = Easynfe_Nfe_Helper_Data::NFE_TPNF_SAIDA; // tipo da operação 0 - entrada, 1 - saida
@@ -595,6 +595,9 @@ class Easynfe_Nfe_Model_Nfe {
         $aIdeData['nfe.finNFe'] = Easynfe_Nfe_Helper_Data::NFE_FINNFE_NORMAL; // numero da nota fiscal
         $aIdeData['nfe.procEmi'] = Easynfe_Nfe_Helper_Data::NFE_PROCEMI_DEFAULT; // tipo de emissao
         $aIdeData['nfe.verProc'] = '1'; // tipo de emissao
+        $aIdeData['nfe.indFinal'] = '1'; // tipo do consumidor (1 - consumidor final)
+        $aIdeData['nfe.indPres'] = '9'; // presença do comprador no estabelecimento (9 - operação não presencial, outros.)
+        $aIdeData['nfe.idDest'] = '1'; // local de destino da operação (1 - Operação interna.)
 
         return $aIdeData;
     }
