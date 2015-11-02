@@ -43,7 +43,7 @@ class Easynfe_Nfe_Model_Nfe {
                 ->getCollection()
                 ->addStatusFilter(Easynfe_Nfe_Helper_Data::NFE_SHIPMENT_STATUS_CREATED);
 
-        $aParams["nfe.NFe"]["nfe.infNFe"]["@versao"] = Mage::getStoreConfig('easynfe_nfe/geral/versao');
+        $aParams["nfe.NFe"]["nfe.infNFe"]["@versao"] = '3.10';
         $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.ide"] = $this->_prepareIdeData();
         $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.emit"] = $this->_prepareEmitData();
 
