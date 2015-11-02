@@ -14,17 +14,17 @@ class Easynfe_Nfe_Model_Nfe {
     /**
      * staging server URLs
      */    
-    const NFE_TEST_REQUEST_PUT_URL = 'https://staging.doit.com.br/easy-nfe-server/api/v1/nfe';
-    const NFE_TEST_REQUEST_URL = 'https://staging.doit.com.br/easy-nfe-server/api/v1/nfe/request/';
+    const NFE_TEST_REQUEST_PUT_URL = 'https://staging.doit.com.br/easy-nfe-server/api/v2/nfe';
+    const NFE_TEST_REQUEST_URL = 'https://staging.doit.com.br/easy-nfe-server/api/v2/nfe/request/';
     
     const NFE_TEST_REQUEST_URL_BASE = 'https://staging.doit.com.br/easy-nfe-server/';
     
     /**
      * server URLs
      */
-    const NFE_REQUEST_PUT_URL = 'https://easynfe.doit.com.br/api/v1/nfe';
+    const NFE_REQUEST_PUT_URL = 'https://easynfe.doit.com.br/api/v2/nfe';
     
-    const NFE_REQUEST_URL =     'https://easynfe.doit.com.br/api/v1/nfe/request/';
+    const NFE_REQUEST_URL =     'https://easynfe.doit.com.br/api/v2/nfe/request/';
     
     const NFE_REQUEST_URL_BASE = 'https://easynfe.doit.com.br/';
     
