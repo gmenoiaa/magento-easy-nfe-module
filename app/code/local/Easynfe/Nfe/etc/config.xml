@@ -15,15 +15,7 @@
         <Easynfe_Nfe>
             <version>0.1.0</version>
         </Easynfe_Nfe>
-    </modules>   
-    <default>
-        <easynfe_nfe>
-            <geral>
-                <versao>3.10</versao>
-            </geral>
-        </easynfe_nfe>
-    </default>
-
+    </modules>
     <global>
         <template>
             <email>

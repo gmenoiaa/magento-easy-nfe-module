@@ -29,8 +29,6 @@ class Easynfe_Nfe_Model_Nfe {
     const NFE_REQUEST_URL_BASE = 'https://easynfe.doit.com.br/';
     
     
-    const NFE_SERIE = '1';
-
     /**
      * Starts processing NF-e 
      */
@@ -214,7 +212,7 @@ class Easynfe_Nfe_Model_Nfe {
             			)
             	));
 
-            	$access_key = file_get_contents( $url_base_key . '/' . Mage::getStoreConfig('easynfe_nfe/acesso/chave') . '/' . self::NFE_SERIE . '/' . $httpmessage[1] . '/accessKey', false, $context);
+            	$access_key = file_get_contents( $url_base_key . '/' . Mage::getStoreConfig('easynfe_nfe/acesso/chave') . '/' . Mage::getStoreConfig('easynfe_nfe/config/serie') . '/' . $httpmessage[1] . '/accessKey', false, $context);
                 
                 if( $access_key ){ 
                     
@@ -248,7 +246,7 @@ class Easynfe_Nfe_Model_Nfe {
                      * save tmp xml
                      */
                     $tmp_filename = Mage::getBaseDir('media') . '/nf/tmp/'.$access_key.'.xml';
-                    $xml_content = file_get_contents( $url_base . 'nfe/' . Mage::getStoreConfig('easynfe_nfe/acesso/chave') . '/' . Easynfe_Nfe_Model_Nfe::NFE_SERIE . '/' . $httpmessage[1] . '?accessKey=' . $access_key);
+                    $xml_content = file_get_contents( $url_base . 'nfe/' . Mage::getStoreConfig('easynfe_nfe/acesso/chave') . '/' . Mage::getStoreConfig('easynfe_nfe/config/serie') . '/' . $httpmessage[1] . '?accessKey=' . $access_key);
                     
                     file_put_contents( $tmp_filename, $xml_content);
                     $nfXML = new Zend_Config_Xml( $tmp_filename );
@@ -259,7 +257,7 @@ class Easynfe_Nfe_Model_Nfe {
                         file_put_contents( $xml_filename, $xml_content);
                         
                         $pdf_filename = Mage::getBaseDir('media') . '/nf/pdf/'.$nfXML->protNFe->infProt->chNFe.'.pdf';
-                        $pdf_content = file_get_contents( $url_base . 'nfe/' . Mage::getStoreConfig('easynfe_nfe/acesso/chave') . '/' . Easynfe_Nfe_Model_Nfe::NFE_SERIE . '/' . $httpmessage[1] . '/danfe?accessKey=' . $access_key);
+                        $pdf_content = file_get_contents( $url_base . 'nfe/' . Mage::getStoreConfig('easynfe_nfe/acesso/chave') . '/' . Mage::getStoreConfig('easynfe_nfe/config/serie') . '/' . $httpmessage[1] . '/danfe?accessKey=' . $access_key);
                         file_put_contents( $pdf_filename, $pdf_content );
                        
                         $mRequest->setData('messages', $nfXML->protNFe->infProt->chNFe );
@@ -583,7 +581,7 @@ class Easynfe_Nfe_Model_Nfe {
         $aIdeData['nfe.natOp'] = Mage::getStoreConfig('easynfe_nfe/config/natop') == '1' ? 'Venda de Mercadorias' : '';
         $aIdeData['nfe.indPag'] = '0'; //$mOrder->getPayment()->getMethod(); // rewrited on webservice 
         $aIdeData['nfe.mod'] = Mage::getStoreConfig('easynfe_nfe/config/mod');
-        $aIdeData['nfe.serie'] = self::NFE_SERIE;
+        $aIdeData['nfe.serie'] = Mage::getStoreConfig('easynfe_nfe/config/serie') ;
         $aIdeData['nfe.nNF'] = '1'; // rewrited on webservice 
         $aIdeData['nfe.dEmi'] = date('Y-m-d'); // data de emissao do documento fiscal
         $aIdeData['nfe.dSaiEnt'] = date('Y-m-d'); // data de saida ou entrada do produtogn
