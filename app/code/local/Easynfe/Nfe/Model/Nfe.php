@@ -624,7 +624,7 @@ class Easynfe_Nfe_Model_Nfe {
         $aEmitData['nfe.enderEmit']['nfe.cPais'] = Mage::getStoreConfig('easynfe_nfe/emit/cpais');
         $aEmitData['nfe.enderEmit']['nfe.xPais'] = Mage::app()->getLocale()->getCountryTranslation(Mage::getModel('easynfe_nfe/directory_country')->load(Mage::getStoreConfig('easynfe_nfe/emit/cpais'))->getCountryId());
         
-        $aEmitData['nfe.IE'] = (string)Mage::getStoreConfig('easynfe_nfe/emit/ie');        
+        $aEmitData['nfe.IE'] = (string)str_replace(".", "", Mage::getStoreConfig('easynfe_nfe/emit/ie'));
         $aEmitData['nfe.CRT'] = (string)Mage::getStoreConfig('easynfe_nfe/emit/crt');
 
         return $aEmitData;
