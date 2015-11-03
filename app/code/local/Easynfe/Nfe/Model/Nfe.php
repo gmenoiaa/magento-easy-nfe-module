@@ -67,7 +67,6 @@ class Easynfe_Nfe_Model_Nfe {
                     $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.det"] = $this->_prepareItems($mOrderShipment);
                     $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.total"] = $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.det"]["nfe.total"];
                     $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.transp"]["nfe.modFrete"] = '0'; // emitente
-                    //$aParams["nfe.NFe"]["nfe.infNFe"]["nfe.total"] =  $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.det"]["nfe.total"];
 
                     $aParams["nfe.organization"] = Mage::getStoreConfig('easynfe_nfe/acesso/chave');
                     $aParams["nfe.cert"]["easynfe.certData"] = Mage::getModel('easynfe_nfe/certificado')->load('1')->getCertificado();
@@ -114,7 +113,7 @@ class Easynfe_Nfe_Model_Nfe {
             CURLOPT_POST => 1,
             CURLOPT_HEADER => 0,
             CURLOPT_TIMEOUT => 120,
-	    CURLOPT_USERPWD => Mage::getStoreConfig('easynfe_nfe/acesso/chave') . ":" . Mage::getStoreConfig('easynfe_nfe/acesso/pass'),
+	        CURLOPT_USERPWD => Mage::getStoreConfig('easynfe_nfe/acesso/chave') . ":" . Mage::getStoreConfig('easynfe_nfe/acesso/pass'),
             CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
             CURLOPT_POSTFIELDS => Zend_Json::encode($aParams),
             //CURLOPT_POST=> true,
@@ -153,16 +152,12 @@ class Easynfe_Nfe_Model_Nfe {
         $mNfeRequest = Mage::getModel('easynfe_nfe/sales_order_request')
                 ->getCollection()
                 ->addStatusFilter(Easynfe_Nfe_Helper_Data::NFE_SHIPMENT_STATUS_PROCESSING);    
-     //   echo '<pre>';
         if ($mNfeRequest){
             foreach ($mNfeRequest as $request){
                  $this->_getRequestInfo( $request );
                 
             }
-        }
-        
-      
-        
+        }        
     }
     
     
@@ -183,10 +178,10 @@ class Easynfe_Nfe_Model_Nfe {
         }
         
         //$httpmessage = file($url . $request->getMessages() );
-	$defaults = array(
+	    $defaults = array(
             CURLOPT_HEADER => 0,
             CURLOPT_TIMEOUT => 120,
-	    CURLOPT_USERPWD => Mage::getStoreConfig('easynfe_nfe/acesso/chave') . ":" . Mage::getStoreConfig('easynfe_nfe/acesso/pass'),
+	        CURLOPT_USERPWD => Mage::getStoreConfig('easynfe_nfe/acesso/chave') . ":" . Mage::getStoreConfig('easynfe_nfe/acesso/pass'),
             CURLOPT_CUSTOMREQUEST => "GET",
             CURLOPT_RETURNTRANSFER => true
         );
@@ -194,9 +189,9 @@ class Easynfe_Nfe_Model_Nfe {
         $ch = curl_init($url.$request->getMessages());
         curl_setopt_array($ch, ($defaults));        
 
-	$result = curl_exec($ch);
+	    $result = curl_exec($ch);
 	
-	$httpmessage = explode(PHP_EOL, $result);
+	    $httpmessage = explode(PHP_EOL, $result);
 
         $mRequest = Mage::getModel('easynfe_nfe/sales_order_request')->load($request->getId());
         $orderId = Mage::getModel('easynfe_nfe/sales_order')->load( Mage::getModel('easynfe_nfe/sales_order_nf')->load( $mRequest->getNfeNfId() )->getNfOrderId() )->getOrderId();
@@ -276,7 +271,7 @@ class Easynfe_Nfe_Model_Nfe {
                         unlink($tmp_filename);
                         /**/
 
-			if( Mage::getStoreConfig('easynfe_nfe/email/status') ){
+			 if( Mage::getStoreConfig('easynfe_nfe/email/status') ){
 		                try{
 		                    
 		                      // send email
@@ -336,7 +331,6 @@ class Easynfe_Nfe_Model_Nfe {
                 $mRequest->setData('messages', $httpmessage[1] );
                 $mRequest->setData('finished_at', date('Y-m-d H:i:s'));
                 /**
-                
                  * change status order
                 */
                  $mOrder->setStatus('error_nf')->save(); 
@@ -366,7 +360,6 @@ class Easynfe_Nfe_Model_Nfe {
      * @return array 
      */
     private function _prepareCustomerData($mOrder) {
-
         $aCustomerData['nfe.CPF'] = ( str_replace(array('.', '/', '-'), array('', '', ''), $mOrder->getCustomerTaxvat()) );
         $aCustomerData['nfe.xNome'] = $mOrder->getCustomerName();
         $aCustomerData['nfe.indIEDest'] = 9;
@@ -408,13 +401,10 @@ class Easynfe_Nfe_Model_Nfe {
      * @param Mage_Sales_Model_Order_Shipment $mOrderShipment 
      */
     private function _prepareItems($mOrderShipment) {
-
         $key = 0;
         
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBC'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'] = '0';
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMS'] = '0';
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMSDeson'] = '0';
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vNF'] = '0';
 
         $mShipping = $mOrderShipment->getOrder()->getShippingAddress();
         
@@ -501,75 +491,52 @@ class Easynfe_Nfe_Model_Nfe {
             $vFrete = 0;
             
             if($arrFreteParcial[$cKey] > 0){
-                    $vFrete = ( $arrFreteParcial[$cKey] * ( $_shipmentItem->getQty() / $mOrderItem->getQtyOrdered() ) ) * (1 + $percent);
-                    $aOrderItem[$cKey]['nfe.prod']['nfe.vFrete'] = (string)number_format($vFrete,  2,'.', '' );
+                $vFrete = ( $arrFreteParcial[$cKey] * ( $_shipmentItem->getQty() / $mOrderItem->getQtyOrdered() ) ) * (1 + $percent);
+                $aOrderItem[$cKey]['nfe.prod']['nfe.vFrete'] = (string)number_format($vFrete,  2,'.', '' );
             }
            
             $vTotal = number_format( ( $productPrice * $_shipmentItem->getQty() ) ,  2,'.', '' );
             
             /**
-             * ICMS 00
+             * ICMS
              */
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.ICMS']['nfe.ICMS00']['nfe.orig'] = (string) ( $_shipmentItem->getNfeOrig() ? $_shipmentItem->getNfeOrig() : '0' ) ;
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.ICMS']['nfe.ICMS00']['nfe.CST'] = '00';
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.ICMS']['nfe.ICMS00']['nfe.modBC'] = '0'; //a definir
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.ICMS']['nfe.ICMS00']['nfe.vBC'] = (string)number_format( $vTotal + $vFrete, 2,'.', '' );
-            
-            /**
-             * ICMS fixed 18% 
-             */
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.ICMS']['nfe.ICMS00']['nfe.pICMS'] = '18';
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.ICMS']['nfe.ICMS00']['nfe.vICMS'] = (string)number_format( ($vTotal + $vFrete) * 0.18,  2,'.', '' );
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.ICMS']['nfe.ICMSSN102']['nfe.orig'] = (string) ( $_shipmentItem->getNfeOrig() ? $_shipmentItem->getNfeOrig() : '0' ) ;
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.ICMS']['nfe.ICMSSN102']['nfe.CSOSN'] = '102';
 
+            /**
+             * COFINS CST 99
+             */
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.COFINS']['nfe.COFINSOutr']['nfe.CST'] = '99';
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.COFINS']['nfe.COFINSOutr']['nfe.vBC'] = '0';
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.COFINS']['nfe.COFINSOutr']['nfe.pCOFINS'] = '0';
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.COFINS']['nfe.COFINSOutr']['nfe.vCOFINS'] = '0';
             
             /**
-             * COFINS CST 01 - 7.60%
+             * PIS CST 99
              */
-            $pAliquotaCofins = '7.60';
-            
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.COFINS']['nfe.COFINSAliq']['nfe.CST'] = '01';
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.COFINS']['nfe.COFINSAliq']['nfe.vBC'] = (string)number_format( $vTotal + $vFrete,2,'.', '' );
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.COFINS']['nfe.COFINSAliq']['nfe.pCOFINS'] = $pAliquotaCofins;
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.COFINS']['nfe.COFINSAliq']['nfe.vCOFINS'] = (string)number_format( ( $vTotal + $vFrete )* ($pAliquotaCofins / 100) , 2,'.', '' );
-            
-            /**
-             * PIS CST 01 - 1.65%
-             */
-            $pAliquotaPis = '1.65';    
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.PIS']['nfe.PISAliq']['nfe.CST'] = '01';
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.PIS']['nfe.PISAliq']['nfe.vBC'] = (string)number_format( $vTotal + $vFrete,2,'.', '' );
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.PIS']['nfe.PISAliq']['nfe.pPIS'] = $pAliquotaPis;
-            $aOrderItem[$cKey]['nfe.imposto']['nfe.PIS']['nfe.PISAliq']['nfe.vPIS'] = (string)number_format( ( $vTotal + $vFrete) * ($pAliquotaPis / 100) , 2,'.', '' );
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.PIS']['nfe.PISOutr']['nfe.CST'] = '99';
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.PIS']['nfe.PISOutr']['nfe.vBC'] = '0';
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.PIS']['nfe.PISOutr']['nfe.pPIS'] = '0';
+            $aOrderItem[$cKey]['nfe.imposto']['nfe.PIS']['nfe.PISOutr']['nfe.vPIS'] = '0';
             
             /**
              * sum items
              */
             $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'] += $vTotal;
-           
-            $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMS'] += ($vTotal + $vFrete) * 0.18;
-            $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBC'] += $vTotal + $vFrete ;
             $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vNF'] += $vTotal + $vFrete;
-           
-            $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vPIS'] += ($vTotal + $vFrete ) * ($pAliquotaPis / 100);
-            $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vCOFINS'] += ($vTotal + $vFrete) * ($pAliquotaCofins / 100);
-
+            
             if($vFrete > 0){
                 $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vFrete'] += $vFrete;
             }
-            /*if( $dTotal ){
-                $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vDesc'] += $dTotal;
-            }*/
         }
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'] = (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'],  2,'.', '' );
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMS'] = (string)number_format ( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMS'],  2,'.', '' );
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBC'] = (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBC'],  2,'.', '' );
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vNF'] =  (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vNF'], 2,'.', '' );
-       // if( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vFrete'] )
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vFrete'] = (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vFrete'], 2,'.', '' );
-        
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vPIS'] = (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vPIS'], 2,'.', '' );
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vCOFINS'] = (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vCOFINS'], 2,'.', '' );
-
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMS'] = '0';
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMSDeson'] = '0';
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBC'] = '0';
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vPIS']= '0';
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vCOFINS'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vST'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBCST'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vSeg'] = '0';
@@ -577,7 +544,6 @@ class Easynfe_Nfe_Model_Nfe {
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vII'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vIPI'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vOutro'] = '0';
-        
         return $aOrderItem;
     }
 
@@ -625,7 +591,7 @@ class Easynfe_Nfe_Model_Nfe {
         $aEmitData['nfe.enderEmit']['nfe.xBairro'] = Mage::getStoreConfig('easynfe_nfe/emit/bairro');
         $aEmitData['nfe.enderEmit']['nfe.cMun'] = Mage::getStoreConfig('easynfe_nfe/emit/cmun');
         $aEmitData['nfe.enderEmit']['nfe.xMun'] = ( Mage::getModel('easynfe_nfe/directory_country_region_city')->load( Mage::getStoreConfig('easynfe_nfe/emit/cmun') )->getName() );
-	$aEmitData['nfe.enderEmit']['nfe.fone'] = (string) Mage::getStoreConfig('easynfe_nfe/emit/fone') ? Mage::getStoreConfig('easynfe_nfe/emit/fone'): '1130643003' ;
+	    $aEmitData['nfe.enderEmit']['nfe.fone'] = (string) Mage::getStoreConfig('easynfe_nfe/emit/fone') ? Mage::getStoreConfig('easynfe_nfe/emit/fone'): '1130643003' ;
 
         $aEmitData['nfe.enderEmit']['nfe.UF'] = Mage::getModel('directory/region')->load( Mage::getModel('easynfe_nfe/directory_country_region')->load( Mage::getStoreConfig('easynfe_nfe/emit/cuf') )->getRegionId() )->getCode();
         $aEmitData['nfe.enderEmit']['nfe.CEP'] = Mage::getStoreConfig('easynfe_nfe/emit/cep');
