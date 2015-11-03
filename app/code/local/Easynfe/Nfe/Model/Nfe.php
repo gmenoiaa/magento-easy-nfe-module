@@ -376,15 +376,24 @@ class Easynfe_Nfe_Model_Nfe {
         $shippingStreet = $mShipping->getStreet();
         $aCustomerData['nfe.enderDest']['nfe.xLgr'] = (string)trim($shippingStreet[0]);
         $aCustomerData['nfe.enderDest']['nfe.nro'] = (string) trim($shippingStreet[1]);
-        $aCustomerData['nfe.enderDest']['nfe.xBairro'] = trim($shippingStreet[3]);
         if (isset($shippingStreet[2]) && $shippingStreet[2]) {
             $aCustomerData['nfe.enderDest']['nfe.xCpl'] = (string) trim($shippingStreet[2]);
         }
-        $aCustomerData['nfe.enderDest']['nfe.fone'] =
-            (string) trim(str_replace(array('-', ' ', '(', ')'), array('', '', '', ''), $mShipping->getTelephone()));
-       
-        $aCustomerData['nfe.enderDest']['nfe.cMun'] = $mShipping->getCity();
-        $aCustomerData['nfe.enderDest']['nfe.xMun'] = ( Mage::getModel('easynfe_nfe/directory_country_region_city')->load( $mShipping->getCity() )->getName() );        
+        $aCustomerData['nfe.enderDest']['nfe.xBairro'] = trim($shippingStreet[3]);
+        $aCustomerData['nfe.enderDest']['nfe.fone'] = (string) trim(str_replace(array('-', ' ', '(', ')'), array('', '', '', ''), $mShipping->getTelephone()));       
+        
+        $shippingCity = $mShipping->getCity();
+        if (is_int($shippingCity)) {
+            $aCustomerData['nfe.enderDest']['nfe.cMun'] = $shippingCity;
+            $aCustomerData['nfe.enderDest']['nfe.xMun'] = ( Mage::getModel('easynfe_nfe/directory_country_region_city')->load( trim($shippingCity) )->getName() );
+        } else {
+            $regionCityCollection = Mage::getModel('easynfe_nfe/directory_country_region_city')->getCollection();
+            $regionCityCollection->addFieldToFilter('NAME', trim($shippingCity));
+
+            $aCustomerData['nfe.enderDest']['nfe.cMun'] = $regionCityCollection->getFirstItem()->getId();
+            $aCustomerData['nfe.enderDest']['nfe.xMun'] = $shippingCity;
+        }
+
         $aCustomerData['nfe.enderDest']['nfe.UF'] = Mage::getModel('directory/region')->load($mShipping->getRegionId())->getCode();
         $aCustomerData['nfe.enderDest']['nfe.cPais'] = Mage::getModel('easynfe_nfe/directory_country')->load($mShipping->getCountryId(), 'country_id')->getId();
         $aCustomerData['nfe.enderDest']['nfe.xPais'] = Mage::app()->getLocale()->getCountryTranslation($mShipping->getCountryId());
