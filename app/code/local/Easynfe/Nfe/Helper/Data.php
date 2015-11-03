@@ -131,6 +131,19 @@ class Easynfe_Nfe_Helper_Data extends Mage_Core_Helper_Abstract
      */
      const NFE_SHIPMENT_STATUS_ERROR  = 'error';
      
-     
+    /**
+     * @var string
+     */
+     const NFE_TIPO_CONSUMIDOR  = '1';
+
+    /**
+     * @var string
+     */
+     const NFE_PRESENCA_COMPRADOR_ESTABELECIMENTO  = '9';
+
+    /**
+     * @var string
+     */
+     const NFE_LOCAL_DESTINO_OPERACAO  = '1';     
 
 }

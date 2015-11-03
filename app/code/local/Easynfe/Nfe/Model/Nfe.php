@@ -594,11 +594,10 @@ class Easynfe_Nfe_Model_Nfe {
         $aIdeData['nfe.tpAmb'] = Mage::getStoreConfig('easynfe_nfe/config/tpamb'); // tipo de emissao 
         $aIdeData['nfe.finNFe'] = Easynfe_Nfe_Helper_Data::NFE_FINNFE_NORMAL; // numero da nota fiscal
         $aIdeData['nfe.procEmi'] = Easynfe_Nfe_Helper_Data::NFE_PROCEMI_DEFAULT; // tipo de emissao
-        $aIdeData['nfe.verProc'] = '1'; // tipo de emissao
-        $aIdeData['nfe.indFinal'] = '1'; // tipo do consumidor (1 - consumidor final)
-        $aIdeData['nfe.indPres'] = '9'; // presença do comprador no estabelecimento (9 - operação não presencial, outros.)
-        $aIdeData['nfe.idDest'] = '1'; // local de destino da operação (1 - Operação interna.)
-
+        $aIdeData['nfe.verProc'] = 1; //tipo de emissao
+        $aIdeData['nfe.indFinal'] = Easynfe_Nfe_Helper_Data::NFE_TIPO_CONSUMIDOR; // tipo do consumidor (1 - consumidor final)
+        $aIdeData['nfe.indPres'] = Easynfe_Nfe_Helper_Data::NFE_PRESENCA_COMPRADOR_ESTABELECIMENTO; // presença do comprador no estabelecimento (9 - operação não presencial, outros.)
+        $aIdeData['nfe.idDest'] = Easynfe_Nfe_Helper_Data::NFE_LOCAL_DESTINO_OPERACAO; // local de destino da operação (1 - Operação interna.)
         return $aIdeData;
     }
 
