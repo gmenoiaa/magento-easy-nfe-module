@@ -380,10 +380,8 @@ class Easynfe_Nfe_Model_Nfe {
             $aCustomerData['nfe.enderDest']['nfe.cMun'] = $shippingCity;
             $aCustomerData['nfe.enderDest']['nfe.xMun'] = ( Mage::getModel('easynfe_nfe/directory_country_region_city')->load( trim($shippingCity) )->getName() );
         } else {
-            $regionCityCollection = Mage::getModel('easynfe_nfe/directory_country_region_city')->getCollection();
-            $regionCityCollection->addFieldToFilter('NAME', trim($shippingCity));
-
-            $aCustomerData['nfe.enderDest']['nfe.cMun'] = $regionCityCollection->getFirstItem()->getId();
+            $shippingCityId = Mage::getModel('easynfe_nfe/directory_country_region_city')->load(trim($shippingCity), 'NAME')->getId();
+            $aCustomerData['nfe.enderDest']['nfe.cMun'] = $shippingCityId;
             $aCustomerData['nfe.enderDest']['nfe.xMun'] = $shippingCity;
         }
 
@@ -458,16 +456,13 @@ class Easynfe_Nfe_Model_Nfe {
             $dDescTotal = 0;
             if( $mOrderItem->getDiscountAmount() > 0 ){
                 $dDescTotal = number_format( $mOrderItem->getDiscountAmount() * ( $_shipmentItem->getQty() / $mOrderItem->getQtyOrdered()  ),  2,'.', '' );
-                $productPrice -= $dDescTotal/$_shipmentItem->getQty();
             }
-            
+            $aOrderItem[$cKey]['nfe.prod']['nfe.vDesc'] = $dDescTotal;
+
             $diff = $mOrderShipment->getOrder()->getTotalPaid() - $mOrderShipment->getOrder()->getGrandTotal();
             $percent = $diff / $mOrderShipment->getOrder()->getGrandTotal();
-                
             $productPrice = $productPrice * (1 + $percent);
-            
-            unset( $aOrderItem[$cKey]['nfe.prod']['nfe.vDesc'] );
-            
+                        
             $aOrderItem[$cKey]['nfe.prod']['nfe.vProd'] = (string)number_format( $productPrice * $_shipmentItem->getQty(),  2,'.', '' );
           
             $aOrderItem[$cKey]['nfe.prod']['nfe.indTot'] = '1';
@@ -523,7 +518,8 @@ class Easynfe_Nfe_Model_Nfe {
              * sum items
              */
             $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'] += $vTotal;
-            $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vNF'] += $vTotal + $vFrete;
+            $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vNF'] += (($vTotal + $vFrete) - $dDescTotal);
+            $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vDesc'] += $dDescTotal;
             
             if($vFrete > 0){
                 $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vFrete'] += $vFrete;
@@ -532,6 +528,7 @@ class Easynfe_Nfe_Model_Nfe {
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'] = (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'],  2,'.', '' );
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vNF'] =  (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vNF'], 2,'.', '' );
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vFrete'] = (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vFrete'], 2,'.', '' );
+        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vDesc'] = (string)number_format( $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vDesc'], 2,'.', '' );
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMS'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vICMSDeson'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBC'] = '0';
@@ -540,7 +537,6 @@ class Easynfe_Nfe_Model_Nfe {
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vST'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vBCST'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vSeg'] = '0';
-        $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vDesc'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vII'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vIPI'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vOutro'] = '0';
