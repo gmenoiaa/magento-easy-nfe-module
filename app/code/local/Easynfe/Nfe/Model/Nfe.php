@@ -41,8 +41,7 @@ class Easynfe_Nfe_Model_Nfe {
                 ->getCollection()
                 ->addStatusFilter(Easynfe_Nfe_Helper_Data::NFE_SHIPMENT_STATUS_CREATED);
 
-        $aParams["nfe.NFe"]["nfe.infNFe"]["@versao"] = '3.10';
-        $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.ide"] = $this->_prepareIdeData();
+        $aParams["nfe.NFe"]["nfe.infNFe"]["@versao"] = '3.10';        
         $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.emit"] = $this->_prepareEmitData();
 
         if (count($mOrderNfe) > 0) {
@@ -63,6 +62,7 @@ class Easynfe_Nfe_Model_Nfe {
 
                     $mOrder->getIncrementId();  
 
+                    $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.ide"] = $this->_prepareIdeData($mOrderShipment);
                     $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.dest"] = $this->_prepareCustomerData($mOrder);
                     $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.det"] = $this->_prepareItems($mOrderShipment);
                     $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.total"] = $aParams["nfe.NFe"]["nfe.infNFe"]["nfe.det"]["nfe.total"];
@@ -404,8 +404,6 @@ class Easynfe_Nfe_Model_Nfe {
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vProd'] = '0';
         $aOrderItem['nfe.total']['nfe.ICMSTot']['nfe.vNF'] = '0';
 
-        $mShipping = $mOrderShipment->getOrder()->getShippingAddress();
-        
         /**
          * assign shipping values to items 
          */
@@ -467,12 +465,10 @@ class Easynfe_Nfe_Model_Nfe {
           
             $aOrderItem[$cKey]['nfe.prod']['nfe.indTot'] = '1';
 
-            $sCustomerUf = Mage::getModel('easynfe_nfe/directory_country_region')->load($mShipping->getRegionId(), 'region_id')->getId();
-
             /**
              * check CFOP code
              */
-            $aOrderItem[$cKey]['nfe.prod']['nfe.CFOP'] = ( $sCustomerUf == Mage::getStoreConfig('easynfe_nfe/emit/cuf') ? '5102' : '6108' );
+            $aOrderItem[$cKey]['nfe.prod']['nfe.CFOP'] = ( $this->getCustomerUf($mOrderShipment) == Mage::getStoreConfig('easynfe_nfe/emit/cuf') ? '5102' : '6108' );
             $aOrderItem[$cKey]['nfe.prod']['nfe.NCM'] = (string) ( $_shipmentItem->getNfeNcm() ? $_shipmentItem->getNfeNcm() : $mProduct->getNfeNcm() );
 
             $aOrderItem[$cKey]['nfe.prod']['nfe.uCom'] = (string) ( $_shipmentItem->getNfeUcom() ? $_shipmentItem->getNfeUcom() : $mProduct->getNfeUcom() );
@@ -546,7 +542,7 @@ class Easynfe_Nfe_Model_Nfe {
     /**
      * prepare ide information
      */
-    private function _prepareIdeData() {
+    private function _prepareIdeData($mOrderShipment) {
 
         $aIdeData['nfe.cUF'] = Mage::getStoreConfig('easynfe_nfe/config/cuf');
         $aIdeData['nfe.cNF'] = '10000001'; // rewrited on webservice ;
@@ -567,8 +563,8 @@ class Easynfe_Nfe_Model_Nfe {
         $aIdeData['nfe.procEmi'] = Easynfe_Nfe_Helper_Data::NFE_PROCEMI_DEFAULT; // tipo de emissao
         $aIdeData['nfe.verProc'] = 1; //tipo de emissao
         $aIdeData['nfe.indFinal'] = Easynfe_Nfe_Helper_Data::NFE_TIPO_CONSUMIDOR; // tipo do consumidor (1 - consumidor final)
-        $aIdeData['nfe.indPres'] = Easynfe_Nfe_Helper_Data::NFE_PRESENCA_COMPRADOR_ESTABELECIMENTO; // presença do comprador no estabelecimento (9 - operação não presencial, outros.)
-        $aIdeData['nfe.idDest'] = Easynfe_Nfe_Helper_Data::NFE_LOCAL_DESTINO_OPERACAO; // local de destino da operação (1 - Operação interna.)
+        $aIdeData['nfe.indPres'] = Easynfe_Nfe_Helper_Data::NFE_PRESENCA_COMPRADOR_ESTABELECIMENTO; // presença do comprador no estabelecimento (9 - operação não presencial, outros.)        
+        $aIdeData['nfe.idDest'] = ( $this->getCustomerUf($mOrderShipment) == Mage::getStoreConfig('easynfe_nfe/emit/cuf') ? '1' : '2' );
         return $aIdeData;
     }
 
@@ -599,5 +595,10 @@ class Easynfe_Nfe_Model_Nfe {
 
         return $aEmitData;
     }
+
+    private function getCustomerUf($mOrderShipment) {
+        $mShipping = $mOrderShipment->getOrder()->getShippingAddress();
+        return Mage::getModel('easynfe_nfe/directory_country_region')->load($mShipping->getRegionId(), 'region_id')->getId();
+    }   
     
 }
