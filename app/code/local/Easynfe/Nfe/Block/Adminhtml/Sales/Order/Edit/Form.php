@@ -35,6 +35,17 @@ class Easynfe_Nfe_Block_Adminhtml_Sales_Order_Edit_Form extends Mage_Adminhtml_B
                             'value' => $nfRequest->getId()
                         ));
             
+            
+            /**
+             * build form fieldsets
+             */
+            $fieldsetIde = $form->addFieldset(
+                    'nfe_ide',
+                    array('legend'=>Mage::helper('nfe')->__('Grupo de identificação da NF-e'))
+            );            
+            $this->getFields( $fieldsetIde, $request['nfe.NFe']['nfe.infNFe']['nfe.ide'], 'nfe.NFe[nfe.infNFe][nfe.ide]' );
+
+
             /**
              * build form fieldsets
              */
@@ -43,7 +54,9 @@ class Easynfe_Nfe_Block_Adminhtml_Sales_Order_Edit_Form extends Mage_Adminhtml_B
                     array('legend'=>Mage::helper('nfe')->__('Grupo de identificação do emitente da NF-e'))
             );            
             $this->getFields( $fieldsetEmit, $request['nfe.NFe']['nfe.infNFe']['nfe.emit'], 'nfe.NFe[nfe.infNFe][nfe.emit]' );
+
             
+
             $fieldsetDest = $form->addFieldset(
                     'nfe_dest',
                     array('legend'=>Mage::helper('nfe')->__('Grupo de identificação do destinatário da NF-e'))
