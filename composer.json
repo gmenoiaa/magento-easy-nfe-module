@@ -1,0 +1,14 @@
+{
+    "name": "easynfe/nfe",
+    "description": "Módulo Magento Easy NFe",
+    "type": "magento-module",
+    "authors": [
+        {
+            "name": "Geiser Menoia",
+            "email": "geiser.menoia@charter.com"
+        }
+    ],
+    "require": {
+    	"magento-hackathon/magento-composer-installer": "dev-master"
+    }
+}

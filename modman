@@ -1,0 +1,10 @@
+app/code/local/Easynfe/Nfe                                  app/code/local/Easynfe/Nfe                                 
+app/design/adminhtml/default/default/layout/easynfe_nfe.xml app/design/adminhtml/default/default/layout/easynfe_nfe.xml
+app/design/adminhtml/default/default/template/easynfe_nfe   app/design/adminhtml/default/default/template/easynfe_nfe  
+app/design/frontend/default/default/layout/easynfe_nfe.xml  app/design/frontend/default/default/layout/easynfe_nfe.xml 
+app/etc/modules/Easynfe_Nfe.xml                             app/etc/modules/Easynfe_Nfe.xml                            
+app/locale/en_US/Easynfe_Nfe.csv                            app/locale/en_US/Easynfe_Nfe.csv                           
+app/locale/en_US/template/email/sales/easynfe_email.html    app/locale/en_US/template/email/sales/easynfe_email.html   
+app/locale/pt_BR/Easynfe_Nfe.csv                            app/locale/pt_BR/Easynfe_Nfe.csv                           
+app/locale/pt_BR/template/email/sales/easynfe_email.html    app/locale/pt_BR/template/email/sales/easynfe_email.html   
+js/easynfe/nfe                                              js/easynfe/nfe                                             
